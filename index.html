@@ -1,7 +1,59 @@
 <!DOCTYPE html>
+<html>
 <head>
-    <title>SET08101 - Web Tech </title>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" type='text/css' media='screen' href="https://yarnpkg.com/en/package/normalize.css">
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
 </head>
 <body>
-    <h1>Hello Web Tech</h1>
+    <header>
+        <nav>
+            <h1>Jokesify</h1>
+            <p><a href="auth.html">Sign In/Out</a></p>
+        </nav>
+    </header>
+    <main>
+        <template id="jokes-template">
+            <div class="joke-wrapper">
+                <style>
+                    .joke-wrapper {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-between;
+                        font-size: 18px;
+                        line-height: 1.2em;
+                        padding: 0.5rem 1rem;
+                    }
+                    h4 {
+                        font-weight: 700;
+                        margin: 5px 0;
+                        color: teal;
+                    }
+                    .buttons {
+                        text-align: right;
+                    }
+                    @media screen and (min-width: 992px) {
+                        .joke-wrapper {
+                            font-size: 16px;
+                        }
+                    }
+                </style>
+                <h4 id="author">Author</h4>
+                <p id="joke-text">This is a joke!</p>
+                <div class="buttons">
+                    <button class="increment-btn">Like <span id="counter"></span></button>
+                    <button class="share-btn">Share</button>
+                </div>
+            </div>
+        </template>
+        <article id="daily-joke"></article>
+        <section id="jokes-container" class="jokes-container"></section>
+        <section class="pagination"><ul></ul></section>
+    </main>
+    <footer></footer>
+    <script src='main.js'></script>
 </body>
+</html>

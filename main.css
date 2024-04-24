@@ -1,0 +1,28 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #EEE;
+}
+nav {
+    display: flex;
+    justify-content: space-between;
+}
+main {
+    margin: 5% 0;
+}
+.jokes-container section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.jokes-container section joke-card {
+    background-color: #FFF;
+    width: 100%;
+    border-bottom: 3px solid teal;
+    box-shadow: 5px 5px 10px #DDD;
+    margin-bottom: 10px;
+}
+@media screen and (min-width: 992px)  {
+    .jokes-container section joke-card {
+        width: calc(50% - 5px);
+    }
+}
