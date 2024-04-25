@@ -241,9 +241,7 @@ function renderContent(dictJokes, init = false) {
         setCookie(sortedDictJokes[Math.floor(Math.random() * sortedDictJokes.length)]);
     }
     document.cookie.split(';').forEach(cookie => {
-        console.log(cookie);
         if(cookie.split('=')[0] === "dailyJoke") {
-            console.log(dictJokes);
             const dailyJokeContainer = document.getElementById('daily-joke');
 
             dailyJokeId = cookie.split('=')[1];

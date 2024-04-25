@@ -16,7 +16,8 @@ main {
     flex-wrap: wrap;
     justify-content: space-between;
 }
-.jokes-container section joke-card {
+.jokes-container section joke-card,
+.daily-joke {
     display: flex;
     background-color: #FFF;
     width: 100%;
