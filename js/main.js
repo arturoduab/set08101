@@ -243,12 +243,15 @@ function renderContent(dictJokes, init = false) {
     document.cookie.split(';').forEach(cookie => {
         console.log(cookie);
         if(cookie.split('=')[0] === "dailyJoke") {
-            console.log(cookie.split('=')[0]);
+            console.log(dictJokes);
             const dailyJokeContainer = document.getElementById('daily-joke');
 
             dailyJokeId = cookie.split('=')[1];
-            console.log(dictJokes[parseInt(dailyJokeId)].joke);
-            dailyJokeContainer.innerHTML = `<p>${dictJokes[parseInt(dailyJokeId)].joke}</p>`;
+            if(dictJokes[parseInt(dailyJokeId)].type === "single") {
+                dailyJokeContainer.innerHTML = `<p>${dictJokes[parseInt(dailyJokeId)].joke}</p>`;
+            } else {
+                dailyJokeContainer.innerHTML = `<p>${dictJokes[parseInt(dailyJokeId)].setup}</p><p>${dictJokes[parseInt(dailyJokeId)].delivery}</p>`;
+            }
         }
     });
 
