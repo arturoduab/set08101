@@ -63,25 +63,16 @@ customElements.define( 'joke-card', Joke );
 
 function setCookie(dailyJoke) {
 
-    // if(!dailyJokeCookie.includes('dailyJoke')){
-    //     const dailyJoke = fetch(createEndpoint({ "amount": 1 })).then(response => response.json());
-    //     dailyJoke.then(response => {
-    //         console.log(response.joke);
-    //         setCookie('dailyJoke', 'hi');
-    //     });
+    // Calculate the end of the day
+    console.log(dailyJoke);
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
 
-    // }
+    // Create cookie string
+    const cookieString = `${encodeURIComponent("dailyJoke")}=${encodeURIComponent(dailyJoke.id)};expires=${endOfDay.toUTCString()};path=/`;
 
-    // // Calculate the end of the day
-    // console.log(name, value);
-    // const endOfDay = new Date();
-    // endOfDay.setHours(23, 59, 59, 999); // Set time to 23:59:59:999 for the end of the day
-
-    // // Create cookie string
-    // const cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(value)};expires=${endOfDay.toUTCString()};path=/`;
-
-    // // Set the cookie
-    // document.cookie = cookieString;
+    // Set the cookie
+    document.cookie = cookieString;
 }
 
 function sortDictByLikes(dictJokes) {
@@ -250,7 +241,9 @@ function renderJokesCards(dictJokes, init = false) {
     const dailyJokeCookie = document.cookie.split(';');
     console.log(dailyJokeCookie);
 
-    setCookie(sortedDictJokes[Math.floor(Math.random() * sortedDictJokes.length)]);
+    if(!dailyJokeCookie.includes('dailyJoke')) {
+        setCookie(sortedDictJokes[Math.floor(Math.random() * sortedDictJokes.length)]);
+    }
 
     if(init || needToRefreshJokes(sortedDictJokes, Object.values(dictJokes))) {
         const container = document.getElementById('jokes-container');
