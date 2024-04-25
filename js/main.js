@@ -235,14 +235,15 @@ function renderContent(dictJokes, init = false) {
     }
     
     const sortedDictJokes = sortDictByLikes(dictJokes);
-    console.log(Math.floor(Math.random() * sortedDictJokes.length), dictJokes[190]);
     let dailyJokeId;
 
     if(!document.cookie.includes('dailyJoke')) {
         setCookie(sortedDictJokes[Math.floor(Math.random() * sortedDictJokes.length)]);
     }
     document.cookie.split(';').forEach(cookie => {
+        console.log(cookie);
         if(cookie.split('=')[0] === "dailyJoke") {
+            console.log(cookie.split('=')[0]);
             const dailyJokeContainer = document.getElementById('daily-joke');
 
             dailyJokeId = cookie.split('=')[1];
