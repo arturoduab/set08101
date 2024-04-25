@@ -42,7 +42,7 @@ class Joke extends HTMLElement {
         sessionStorage.removeItem("jokes");
         sessionStorage.setItem("jokes", JSON.stringify(seStorage));
 
-        renderJokesCards(seStorage);
+        renderContent(seStorage);
         
     }
 
@@ -62,9 +62,7 @@ class Joke extends HTMLElement {
 customElements.define( 'joke-card', Joke );
 
 function setCookie(dailyJoke) {
-
     // Calculate the end of the day
-    console.log(dailyJoke);
     const endOfDay = new Date();
     endOfDay.setHours(23, 59, 59, 999);
 
@@ -220,7 +218,7 @@ function needToRefreshJokes(current, updated) {
     return false;
 }
 
-function renderJokesCards(dictJokes, init = false) {
+function renderContent(dictJokes, init = false) {
     
     if(dictJokes === false){
         const jokesPromise = getInfo("en").then( (response) => { return loadJokes(response.ids.count) });
@@ -231,19 +229,28 @@ function renderJokesCards(dictJokes, init = false) {
                 sessionStorage.setItem("jokes", JSON.stringify(promiseDict));
             }
     
-            renderJokesCards(promiseDict);
+            renderContent(promiseDict);
             return;    
         });
     }
     
     const sortedDictJokes = sortDictByLikes(dictJokes);
+    console.log(Math.floor(Math.random() * sortedDictJokes.length), dictJokes[190]);
+    let dailyJokeId;
 
-    const dailyJokeCookie = document.cookie.split(';');
-    console.log(dailyJokeCookie);
-
-    if(!dailyJokeCookie.includes('dailyJoke')) {
+    if(!document.cookie.includes('dailyJoke')) {
         setCookie(sortedDictJokes[Math.floor(Math.random() * sortedDictJokes.length)]);
     }
+    document.cookie.split(';').forEach(cookie => {
+        if(cookie.split('=')[0] === "dailyJoke") {
+            const dailyJokeContainer = document.getElementById('daily-joke');
+
+            dailyJokeId = cookie.split('=')[1];
+            console.log(dictJokes[parseInt(dailyJokeId)].joke);
+            dailyJokeContainer.innerHTML = `<p>${dictJokes[parseInt(dailyJokeId)].joke}</p>`;
+        }
+    });
+
 
     if(init || needToRefreshJokes(sortedDictJokes, Object.values(dictJokes))) {
         const container = document.getElementById('jokes-container');
@@ -277,5 +284,5 @@ function renderJokesCards(dictJokes, init = false) {
 
 // MAIN
 document.addEventListener("DOMContentLoaded", () => {
-    renderJokesCards(checkSession(), true);
+    renderContent(checkSession(), true);
 });
