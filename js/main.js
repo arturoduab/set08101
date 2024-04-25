@@ -61,10 +61,31 @@ class Joke extends HTMLElement {
 }
 customElements.define( 'joke-card', Joke );
 
-function sortDictByLikes(dictJokes) {
+function setCookie(dailyJoke) {
 
+    // if(!dailyJokeCookie.includes('dailyJoke')){
+    //     const dailyJoke = fetch(createEndpoint({ "amount": 1 })).then(response => response.json());
+    //     dailyJoke.then(response => {
+    //         console.log(response.joke);
+    //         setCookie('dailyJoke', 'hi');
+    //     });
+
+    // }
+
+    // // Calculate the end of the day
+    // console.log(name, value);
+    // const endOfDay = new Date();
+    // endOfDay.setHours(23, 59, 59, 999); // Set time to 23:59:59:999 for the end of the day
+
+    // // Create cookie string
+    // const cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(value)};expires=${endOfDay.toUTCString()};path=/`;
+
+    // // Set the cookie
+    // document.cookie = cookieString;
+}
+
+function sortDictByLikes(dictJokes) {
     return Object.values(dictJokes).sort((a, b) =>  b.likes - a.likes );
-    // let dict = Object.fromEntries(arr.map(item => [item.id, item]));
 }
 
 function createEndpoint(values) {
@@ -100,7 +121,6 @@ function buildJokeCard(container, joke) {
     jel.setAttribute("data-likes", joke.likes ? joke.likes : 0);
     
     container.appendChild(jel);
-
 }
 
 async function getInfo(selectedLang = "en") {
@@ -157,6 +177,7 @@ function checkSession() {
 }
 
 function isInPage() {
+
     if(window.location.hash.substring(1) && window.location.hash.substring(1).includes("page-")){
         return numActivePage = window.location.hash.substring(1).split('-')[1];
     }
@@ -226,6 +247,11 @@ function renderJokesCards(dictJokes, init = false) {
     
     const sortedDictJokes = sortDictByLikes(dictJokes);
 
+    const dailyJokeCookie = document.cookie.split(';');
+    console.log(dailyJokeCookie);
+
+    setCookie(sortedDictJokes[Math.floor(Math.random() * sortedDictJokes.length)]);
+
     if(init || needToRefreshJokes(sortedDictJokes, Object.values(dictJokes))) {
         const container = document.getElementById('jokes-container');
         const numActivePage = isInPage();
@@ -259,5 +285,4 @@ function renderJokesCards(dictJokes, init = false) {
 // MAIN
 document.addEventListener("DOMContentLoaded", () => {
     renderJokesCards(checkSession(), true);
-
 });
