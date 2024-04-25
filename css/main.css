@@ -1,5 +1,6 @@
 body {
     font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
     background-color: #EEE;
 }
 nav {
@@ -20,6 +21,27 @@ main {
     border-bottom: 3px solid teal;
     box-shadow: 5px 5px 10px #DDD;
     margin-bottom: 10px;
+}
+.joke-text {
+    overflow: overlay;
+}
+.paginated-section:not(.visible) {
+    display: none;
+}
+.pagination ul {
+    list-style: none;
+    text-align: center;
+}
+.pagination ul li {
+    display: inline-block;
+    padding: .5rem;
+}
+.pagination ul li a {
+    color: teal;
+}
+.pagination ul li a.active {
+    color: #000;
+    text-decoration: none;
 }
 @media screen and (min-width: 992px)  {
     .jokes-container section joke-card {

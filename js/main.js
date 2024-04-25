@@ -158,22 +158,32 @@ function checkSession() {
 
 function createPagination(numPages) {
     const pagesSection = document.querySelector('.pagination ul');
+    let activeClass;
     
     for(let i = 1; i <= numPages; i++) {
         let elLi = document.createElement('li');
-        elLi.innerHTML = `<a href="#" onclick="pageSelection(this)" data-page-id="${i}">${i}</a>`;
+        activeClass = i === 1 ? 'class="active"' : '';
+        elLi.innerHTML = `<a href="#" onclick="pageSelection(this)" data-page-id="${i}" ${activeClass}>${i}</a>`;
         pagesSection.appendChild(elLi);
     }
 }
 
 function pageSelection(el) {
     let page = el.getAttribute('data-page-id');
-    document.querySelector(`[data-page="${page}"]`).classList.add("visible")
     
+    if(!el.classList.contains("active")) {
+        document.querySelector(".pagination ul li a.active").classList.remove("active");
+        el.classList.add("active");
+    }
+
+    if(document.querySelector(".paginated-section.visible")){
+        document.querySelector(".paginated-section.visible").classList.remove("visible");
+    }
+    document.querySelector(`[data-page="${page}"]`).classList.add("visible");
+
 }
 
 function renderJokesCards(dictJokes) {
-
     const container = document.getElementById('jokes-container');
     container.innerHTML = '';
 
@@ -202,8 +212,11 @@ function renderJokesCards(dictJokes) {
             containerPag = document.createElement("section");
             containerPag.setAttribute("data-page", counterPage);
             containerPag.setAttribute("class", "paginated-section");
+            if(counterPage === 1) {
+                containerPag.classList.add("visible");
+            }
             container.appendChild(containerPag);
-            containerPag = document.querySelector('[data-page="'+counterPage+'"]')
+            containerPag = document.querySelector('[data-page="'+counterPage+'"]');
         }
         buildJokeCard(containerPag, dictJokes[key]);
         counter++
@@ -213,5 +226,11 @@ function renderJokesCards(dictJokes) {
 
 }
 
+
+
 // MAIN
-renderJokesCards(checkSession());
+document.addEventListener("DOMContentLoaded", () => {
+    renderJokesCards(checkSession());
+
+
+});

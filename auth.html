@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Login - Jokesify</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" type='text/css' media='screen' href="https://yarnpkg.com/en/package/normalize.css">
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <link rel='stylesheet' type='text/css' media='screen' href='auth.css'>
+</head>
+<body>
+    <nav>
+        <p><a href="/">Back to homepage</a></p>
+    </nav>
+    <section class="login">
+        <div class="login-container">
+            <h2>Sign in to your account</h2>
+            <form id="signin-form" action="#" method="POST">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <p id="username-error" class="error-msg"></p>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <p id="pwd-error" class="error-msg"></p>
+                <input type="submit" value="Sign in">
+            </form>
+        </div>
+    </section>
+    <script src='js/auth.js'></script>
+</body>
+</html>
