@@ -156,15 +156,25 @@ function checkSession() {
     return false;
 }
 
+function isInPage() {
+    if(window.location.hash.substring(1) && window.location.hash.substring(1).includes("page-")){
+        return numActivePage = window.location.hash.substring(1).split('-')[1];
+    }
+
+    return null;
+}
+
 function createPagination(numPages) {
-    const pagesSection = document.querySelector('.pagination ul');
+    const paginationSection = document.querySelector('.pagination ul');
     let activeClass;
+    const numActivePage = isInPage();
     
     for(let i = 1; i <= numPages; i++) {
         let elLi = document.createElement('li');
-        activeClass = i === 1 ? 'class="active"' : '';
-        elLi.innerHTML = `<a href="#" onclick="pageSelection(this)" data-page-id="${i}" ${activeClass}>${i}</a>`;
-        pagesSection.appendChild(elLi);
+
+        activeClass = (numActivePage === null && i === 1) || parseInt(numActivePage) === i ? 'class="active"' : '';
+        elLi.innerHTML = `<a href="#page-${i}" onclick="pageSelection(this)" data-page-id="${i}" ${activeClass}>${i}</a>`;
+        paginationSection.appendChild(elLi);
     }
 }
 
@@ -183,10 +193,23 @@ function pageSelection(el) {
 
 }
 
-function renderJokesCards(dictJokes) {
-    const container = document.getElementById('jokes-container');
-    container.innerHTML = '';
+function needToRefreshJokes(current, updated) {
 
+    if (current.length !== updated.length) {
+        return true;
+    }
+
+    for (let i = 0; i < current.length; i++) {
+        if (current[i] !== updated[i]) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function renderJokesCards(dictJokes, init = false) {
+    
     if(dictJokes === false){
         const jokesPromise = getInfo("en").then( (response) => { return loadJokes(response.ids.count) });
     
@@ -197,40 +220,44 @@ function renderJokesCards(dictJokes) {
             }
     
             renderJokesCards(promiseDict);
-    
+            return;    
         });
-
     }
-        
-    dictJokes = sortDictByLikes(dictJokes);
-    let counterPage = counter = 0;
-    let containerPag;
+    
+    const sortedDictJokes = sortDictByLikes(dictJokes);
 
-    for(let key in dictJokes) {
-        if(counter % 12 === 0) {
-            counterPage++;
-            containerPag = document.createElement("section");
-            containerPag.setAttribute("data-page", counterPage);
-            containerPag.setAttribute("class", "paginated-section");
-            if(counterPage === 1) {
-                containerPag.classList.add("visible");
+    if(init || needToRefreshJokes(sortedDictJokes, Object.values(dictJokes))) {
+        const container = document.getElementById('jokes-container');
+        const numActivePage = isInPage();
+        container.innerHTML = '';
+        let counterPage = counter = 0;
+        let containerPag;
+
+        for(let key in sortedDictJokes) {
+            if(counter % 12 === 0) {
+                counterPage++;
+                containerPag = document.createElement("section");
+                containerPag.setAttribute("data-page", counterPage);
+                containerPag.setAttribute("class", "paginated-section");
+                
+                if((numActivePage === null && counterPage === 1) || parseInt(numActivePage) === counterPage) {
+                    containerPag.classList.add("visible");
+                }
+                container.appendChild(containerPag);
+                containerPag = document.querySelector('[data-page="'+counterPage+'"]');
             }
-            container.appendChild(containerPag);
-            containerPag = document.querySelector('[data-page="'+counterPage+'"]');
-        }
-        buildJokeCard(containerPag, dictJokes[key]);
-        counter++
-    };
+            buildJokeCard(containerPag, sortedDictJokes[key]);
+            counter++
+        };
 
-    createPagination(counterPage);
-
+        if(init) createPagination(counterPage);
+    }
 }
 
 
 
 // MAIN
 document.addEventListener("DOMContentLoaded", () => {
-    renderJokesCards(checkSession());
-
+    renderJokesCards(checkSession(), true);
 
 });
