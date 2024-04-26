@@ -11,14 +11,23 @@ nav {
 main {
     margin: 5% 0;
 }
+.daily-joke {
+    display: block;
+    padding: 1rem;
+}
+.daily-joke .daily-joke-content {
+    text-align: right;
+}
 .jokes-container section {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
 }
+.jokes-container section joke-card {
+    display: flex;
+}
 .jokes-container section joke-card,
 .daily-joke {
-    display: flex;
     background-color: #FFF;
     width: 100%;
     border-bottom: 3px solid teal;

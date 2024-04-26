@@ -12,8 +12,8 @@ class Joke extends HTMLElement {
         
         shadowRoot.appendChild(node);
 
-        let jokeText = this.shadowRoot.getElementById('joke-text');
-        jokeText.textContent = this.getAttribute('data-joke');
+        this.jokeText = this.shadowRoot.getElementById('joke-text');
+        this.jokeText.textContent = this.getAttribute('data-joke');
         this.removeAttribute("data-joke");
 
         let authorText = this.shadowRoot.getElementById('author');
@@ -47,7 +47,16 @@ class Joke extends HTMLElement {
     }
 
     shareContent() {
-        return false;
+        const dataToShare = {
+            title: "Jokesify",
+            text: this.jokeText.textContent + "\nFind more jokes at https://arturoduab.github.io/set08101/",
+        }
+
+        try {
+            navigator.share(dataToShare);
+        } catch (err) {
+            console.log(`Error: ${err}`);
+        }
     }
 
     get counter() {
@@ -242,7 +251,7 @@ function renderContent(dictJokes, init = false) {
     }
     document.cookie.split(';').forEach(cookie => {
         if(cookie.split('=')[0] === "dailyJoke") {
-            const dailyJokeContainer = document.getElementById('daily-joke');
+            const dailyJokeContainer = document.getElementById('daily-joke-content');
 
             dailyJokeId = cookie.split('=')[1];
             if(dictJokes[parseInt(dailyJokeId)].type === "single") {
