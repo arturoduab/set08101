@@ -76,7 +76,7 @@ function setCookie(dailyJoke) {
     endOfDay.setHours(23, 59, 59, 999);
 
     // Create cookie string
-    const cookieString = `${encodeURIComponent("dailyJoke")}=${encodeURIComponent(dailyJoke.id)};expires=${endOfDay.toUTCString()};path=/`;
+    const cookieString = `${encodeURIComponent("dailyJoke")}=${encodeURIComponent(dailyJoke)};expires=${endOfDay.toUTCString()};path=/`;
 
     // Set the cookie
     document.cookie = cookieString;

@@ -15,7 +15,7 @@ main {
     display: block;
     padding: 1rem;
 }
-.daily-joke .daily-joke-content {
+.daily-joke div {
     text-align: right;
 }
 .jokes-container section {
@@ -25,11 +25,11 @@ main {
 }
 .jokes-container section joke-card {
     display: flex;
+    width: 100%;
 }
 .jokes-container section joke-card,
 .daily-joke {
     background-color: #FFF;
-    width: 100%;
     border-bottom: 3px solid teal;
     box-shadow: 5px 5px 10px #DDD;
     margin-bottom: 10px;
