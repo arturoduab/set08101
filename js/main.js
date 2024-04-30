@@ -71,22 +71,25 @@ class Joke extends HTMLElement {
 customElements.define( 'joke-card', Joke );
 
 function setCookie(dailyJoke) {
-    // Calculate the end of the day
+    // Calculate the end of the day, creates the content of the cookie (string), and sets it.
+    // A cookie is set only for the joke of the day, at 00:00 a new cookie is set with a new joke.
     const endOfDay = new Date();
     endOfDay.setHours(23, 59, 59, 999);
 
-    // Create cookie string
-    const cookieString = `${encodeURIComponent("dailyJoke")}=${encodeURIComponent(dailyJoke)};expires=${endOfDay.toUTCString()};path=/`;
+    const cookieString = `${encodeURIComponent("dailyJoke")}=${encodeURIComponent(dailyJoke.id)};expires=${endOfDay.toUTCString()};path=/`;
 
-    // Set the cookie
     document.cookie = cookieString;
 }
 
 function sortDictByLikes(dictJokes) {
+    // Return an array with jokes (objects) sorted by number of likes.
     return Object.values(dictJokes).sort((a, b) =>  b.likes - a.likes );
 }
 
 function createEndpoint(values) {
+    // Creates the endpoint for fetching the data from the API. Check https://jokeapi.dev/ for documentation.
+    // Values format is a dictionary (key - value pairs) with the information as the API needs it.
+    // Returns a string.
     let endpoint = "https://v2.jokeapi.dev/joke/";
 
     if(values){
@@ -110,18 +113,22 @@ function createEndpoint(values) {
 }
 
 function buildJokeCard(container, joke) {
+    // Receives the container in which insert the joke card and an object with the joke.
+    // Sets the information as attributes that will be read and some of them removed when the web component is created.
     const jel = document.createElement("joke-card");
 
     jel.setAttribute("data-id", joke.id);
     jel.setAttribute("data-cat", joke.category);
     jel.setAttribute("data-author", joke.author);
-    jel.setAttribute("data-joke", joke.type === "single" ? joke.joke : joke.setup+"\n"+joke.delivery);
+    jel.setAttribute("data-joke", joke.type === "single" ? joke.joke : joke.setup+"\n"+joke.delivery); // jokes can have 1 or 2 parts.
     jel.setAttribute("data-likes", joke.likes ? joke.likes : 0);
     
     container.appendChild(jel);
 }
 
 async function getInfo(selectedLang = "en") {
+    // Gets info from the API related to the number of jokes per language and categories
+    // Returns 
     const endpoint = "https://v2.jokeapi.dev/info";
     const request = await fetch(endpoint);
     const response = await request.json();
@@ -133,6 +140,9 @@ async function getInfo(selectedLang = "en") {
 }
 
 async function loadJokes(idsCount) {
+    // There is a limit of 10 in the number of jokes fetch from the API each time. This function takes the number of jokes as arguments,
+    // and request the API N times until it fetches all the jokes.
+    // Returns the dictionary with all the jokes as Promise object.
     let mergedDict = {};
 
     // Create an array of promises
@@ -152,7 +162,7 @@ async function loadJokes(idsCount) {
                 
                 dict.jokes.forEach( item => {
                     jokesDict[item.id] = item;
-                    jokesDict[item.id].author = "JokesAPI";
+                    jokesDict[item.id].author = "JokesAPI"; // In case CRUD system were implemented allowing an user to submit jokes.
                     jokesDict[item.id].likes = 0;
                 });
                 
@@ -166,7 +176,8 @@ async function loadJokes(idsCount) {
 }
 
 function checkSession() {
-
+    // Checks if the dictionary of jokes has been stored into session storage.
+    // Return either the dictionary or false if it has not been stored.
     if(sessionStorage.getItem("jokes") && sessionStorage.getItem("jokes") !== undefined){
         return JSON.parse(sessionStorage.getItem("jokes"));
     }
@@ -175,7 +186,8 @@ function checkSession() {
 }
 
 function isInPage() {
-
+    // Checks the current page.
+    // Returns null if the URL does not contain any page number (#page-N)
     if(window.location.hash.substring(1) && window.location.hash.substring(1).includes("page-")){
         return numActivePage = window.location.hash.substring(1).split('-')[1];
     }
@@ -184,6 +196,8 @@ function isInPage() {
 }
 
 function createPagination(numPages) {
+    // Takes the number of pages the jokes section should have and creates pagination at its bottom.
+    // If user was in a page different than 1, it stays in that page and the number highlights as active page.
     const paginationSection = document.querySelector('.pagination ul');
     let activeClass;
     const numActivePage = isInPage();
@@ -198,6 +212,7 @@ function createPagination(numPages) {
 }
 
 function pageSelection(el) {
+    // Hide or show page (section) when user hits in a page number.
     let page = el.getAttribute('data-page-id');
     
     if(!el.classList.contains("active")) {
@@ -213,7 +228,9 @@ function pageSelection(el) {
 }
 
 function needToRefreshJokes(current, updated) {
-
+    // Checks if the jokes section needs to be refreshed. This is comparing the order of new array with the previous.
+    // These arrays are sorted by the number of likes, so if a joke has climb positions, the arrays would be different.
+    // Return true if it has changed and needs to be rendered again, false otherwise.
     if (current.length !== updated.length) {
         return true;
     }
@@ -238,56 +255,56 @@ function renderContent(dictJokes, init = false) {
                 sessionStorage.setItem("jokes", JSON.stringify(promiseDict));
             }
     
-            renderContent(promiseDict);
-            return;    
+            renderContent(promiseDict, true);
         });
-    }
-    
-    const sortedDictJokes = sortDictByLikes(dictJokes);
-    let dailyJokeId;
 
-    if(!document.cookie.includes('dailyJoke')) {
-        setCookie(sortedDictJokes[Math.floor(Math.random() * sortedDictJokes.length)]);
-    }
-    document.cookie.split(';').forEach(cookie => {
-        if(cookie.split('=')[0] === "dailyJoke") {
-            const dailyJokeContainer = document.getElementById('daily-joke-content');
+    } else {
+        const sortedDictJokes = sortDictByLikes(dictJokes);
+        let dailyJokeId;
 
-            dailyJokeId = cookie.split('=')[1];
-            if(dictJokes[parseInt(dailyJokeId)].type === "single") {
-                dailyJokeContainer.innerHTML = `<p>${dictJokes[parseInt(dailyJokeId)].joke}</p>`;
-            } else {
-                dailyJokeContainer.innerHTML = `<p>${dictJokes[parseInt(dailyJokeId)].setup}</p><p>${dictJokes[parseInt(dailyJokeId)].delivery}</p>`;
-            }
+        if(!document.cookie.includes('dailyJoke')) {
+            setCookie(sortedDictJokes[Math.floor(Math.random() * sortedDictJokes.length)]);
         }
-    });
+        document.cookie.split(';').forEach(cookie => {
+            if(cookie.split('=')[0] === "dailyJoke") {
+                const dailyJokeContainer = document.getElementById('daily-joke-content');
 
-
-    if(init || needToRefreshJokes(sortedDictJokes, Object.values(dictJokes))) {
-        const container = document.getElementById('jokes-container');
-        const numActivePage = isInPage();
-        container.innerHTML = '';
-        let counterPage = counter = 0;
-        let containerPag;
-
-        for(let key in sortedDictJokes) {
-            if(counter % 12 === 0) {
-                counterPage++;
-                containerPag = document.createElement("section");
-                containerPag.setAttribute("data-page", counterPage);
-                containerPag.setAttribute("class", "paginated-section");
-                
-                if((numActivePage === null && counterPage === 1) || parseInt(numActivePage) === counterPage) {
-                    containerPag.classList.add("visible");
+                dailyJokeId = cookie.split('=')[1];
+                if(dictJokes[parseInt(dailyJokeId)].type === "single") {
+                    dailyJokeContainer.innerHTML = `<p>${dictJokes[parseInt(dailyJokeId)].joke}</p>`;
+                } else {
+                    dailyJokeContainer.innerHTML = `<p>${dictJokes[parseInt(dailyJokeId)].setup}</p><p>${dictJokes[parseInt(dailyJokeId)].delivery}</p>`;
                 }
-                container.appendChild(containerPag);
-                containerPag = document.querySelector('[data-page="'+counterPage+'"]');
             }
-            buildJokeCard(containerPag, sortedDictJokes[key]);
-            counter++
-        };
+        });
 
-        if(init) createPagination(counterPage);
+
+        if(init || needToRefreshJokes(sortedDictJokes, Object.values(dictJokes))) {
+            const container = document.getElementById('jokes-container');
+            const numActivePage = isInPage();
+            container.innerHTML = '';
+            let counterPage = counter = 0;
+            let containerPag;
+
+            for(let key in sortedDictJokes) {
+                if(counter % 12 === 0) {
+                    counterPage++;
+                    containerPag = document.createElement("section");
+                    containerPag.setAttribute("data-page", counterPage);
+                    containerPag.setAttribute("class", "paginated-section");
+                    
+                    if((numActivePage === null && counterPage === 1) || parseInt(numActivePage) === counterPage) {
+                        containerPag.classList.add("visible");
+                    }
+                    container.appendChild(containerPag);
+                    containerPag = document.querySelector('[data-page="'+counterPage+'"]');
+                }
+                buildJokeCard(containerPag, sortedDictJokes[key]);
+                counter++
+            };
+
+            if(init) createPagination(counterPage);
+        }
     }
 }
 

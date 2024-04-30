@@ -11,8 +11,8 @@
 <body>
     <header>
         <nav>
-            <h1>Jokesify</h1>
-            <p><a href="auth.html" >Sign In/Out</a></p>
+            <figure><img src="jokesify-logo.png" alt="Jokesify logo"></figure>
+            <p><a href="auth.html" id="sign-in">Sign In/Out</a></p>
         </nav>
     </header>
     <main>
@@ -36,6 +36,10 @@
                         width: 100%;
                         align-self: flex-end;
                         text-align: right;
+                    }
+                    p {
+                        width: 100%;
+                        word-break: break-word;
                     }
                     @media screen and (min-width: 768px) {
                         .joke-wrapper {

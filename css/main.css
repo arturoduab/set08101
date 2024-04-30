@@ -2,14 +2,23 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 18px;
     background-color: #EEE;
+    margin: 0;
 }
 nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: #FFF;
+    padding: 0 10px;
+}
+nav figure {
+    margin: 0;
+}
+nav figure img {
+    max-width: 200px;
 }
 main {
-    margin: 5% 0;
+    margin: 5% 10px;
 }
 .daily-joke {
     display: block;
